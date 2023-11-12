@@ -56,7 +56,7 @@ const ManifestV3 = {
     background: {
         service_worker: "src/entries/background/serviceWorker.ts",
     },
-    host_permissions: ["*://*/*"],
+    // host_permissions: ["*://*/*"],
 };
 
 export function getManifest(manifestVersion: number): chrome.runtime.ManifestV2 | chrome.runtime.ManifestV3 {
