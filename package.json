@@ -1,6 +1,6 @@
 {
     "name": "vite-web-extension",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "displayName": "Frei vom Bier",
     "author": "pdamianik",
     "description": "Kein Freibier mehr\n\nIcons from <a href=\"https://streamlinehq.com/\">Streamline</a>",
