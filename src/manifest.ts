@@ -38,25 +38,17 @@ const browserAction = {
 
 const ManifestV2 = {
     ...sharedManifest,
-    background: {
-        scripts: ["src/entries/background/script.ts"],
-        persistent: true,
-    },
     browser_action: browserAction,
     options_ui: {
         ...sharedManifest.options_ui,
         chrome_style: false,
     },
-    permissions: [...sharedManifest.permissions, "*://*/*"],
+    permissions: [...sharedManifest.permissions],
 };
 
 const ManifestV3 = {
     ...sharedManifest,
     action: browserAction,
-    background: {
-        service_worker: "src/entries/background/serviceWorker.ts",
-    },
-    // host_permissions: ["*://*/*"],
 };
 
 export function getManifest(manifestVersion: number): chrome.runtime.ManifestV2 | chrome.runtime.ManifestV3 {
