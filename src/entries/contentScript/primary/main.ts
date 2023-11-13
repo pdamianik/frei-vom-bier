@@ -17,16 +17,14 @@ function interceptSend(e: KeyboardEvent) {
     }
 }
 
-function disableSend(disabled: boolean = true) {
+bierig.subscribe((bierig) => {
     const buttons = document.querySelectorAll('button');
-    bierig.set(disabled);
     for (const button of buttons) {
         if (button.innerText === 'Send' || button.innerText === 'Senden') {
-            console.log(button);
-            button.disabled = disabled;
+            button.disabled = bierig;
         }
     }
-    if (disabled) {
+    if (bierig) {
         document.addEventListener('keydown', interceptSend, true);
         document.addEventListener('keyup', interceptSend, true);
         document.addEventListener('keypress', interceptSend, true);
@@ -35,7 +33,7 @@ function disableSend(disabled: boolean = true) {
         document.removeEventListener('keyup', interceptSend);
         document.removeEventListener('keypress', interceptSend);
     }
-}
+});
 
 const naughtyWords = ['freibier', 'bier', 'beer'];
 
@@ -43,7 +41,6 @@ function matchesFreibier(content: string): boolean {
     const words = content.split(/\s/).filter((w) => w.length > 0);
     for (const word of words) {
         for (const naughtyWord of naughtyWords) {
-            console.log(naughtyWord);
             if (levenshtein.get(word, naughtyWord) < Math.ceil(naughtyWord.length / 2)) {
                 return true;
             }
@@ -52,23 +49,31 @@ function matchesFreibier(content: string): boolean {
     return false;
 }
 
-function handleInput(e: InputEvent) {
-    const content = (e.target as HTMLElement).innerText;
-    const freibier = matchesFreibier(content.toLowerCase());
-    disableSend(freibier);
+function checkElement(element: any) {
+    return matchesFreibier(((element as HTMLElement).innerText || (element as HTMLInputElement).value).toLowerCase());
 }
 
-function registerSendHandler() {
+function handleInput(each: (input: Element) => void) {
     const inputs = document.querySelectorAll('.allowTextSelection[role=textbox]');
     let freibier = false;
     for (const input of inputs) {
-        input.removeEventListener('input', handleInput);
-        input.addEventListener('input', handleInput);
-        input.removeEventListener('change', handleInput);
-        input.addEventListener('change', handleInput);
-        freibier ||= matchesFreibier((input as HTMLElement).innerText.toLowerCase());
+        freibier ||= checkElement(input);
+        each(input);
     }
-    disableSend(freibier);
+    bierig.set(freibier);
+}
+
+function handleInputEvent() {
+    handleInput(() => {});
+}
+
+function registerSendHandler() {
+    handleInput((input) => {
+        input.removeEventListener('input', handleInputEvent);
+        input.addEventListener('input', handleInputEvent);
+        input.removeEventListener('change', handleInputEvent);
+        input.addEventListener('change', handleInputEvent);
+    });
 }
 
 const observer = new MutationObserver(registerSendHandler);
